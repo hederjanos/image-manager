@@ -1,0 +1,28 @@
+spring:
+  web:
+    resources:
+      static-locations: classpath:/public
+
+logging:
+  file:
+    name: ${user.home}/ponte-app/logs/ponte-images-app.log
+  pattern:
+    dateformat: "yyyy-MM-dd HH:mm:ss.SSS XXX"
+    level: "%X{sessionId} %X{userId} %X{method} %X{request} %5p"
+  level:
+    root: INFO
+    org.springframework.web: DEBUG
+    hu.ponte: DEBUG
+  logback:
+    rollingpolicy:
+      file-name-pattern: ${user.home}/ponte-app/logs/ponte-images-app.log.%d{yyyy-MM-dd}.%i
+      max-file-size: 10MB
+      max-history: 10
+
+sign:
+  privateKeyPathInResources: "config/keys/key.private"
+  keyAlgorithm: "RSA"
+  signatureAlgorithm: "SHA256withRSA"
+
+allowed-types: image/png, image/jpg, image/jpeg, image/gif
+max-size: 2097152
