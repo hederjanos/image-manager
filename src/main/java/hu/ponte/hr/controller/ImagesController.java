@@ -12,8 +12,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.Digits;
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.time.Duration;
 import java.util.List;
 
 /**
@@ -52,14 +55,23 @@ public class ImagesController {
         if (id == null) {
             throw new IllegalArgumentException();
         }
-        byte[] image = imageStore.download(id);
-        if (image != null) {
-            try (BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(response.getOutputStream())) {
-                bufferedOutputStream.write(image, 0, image.length);
-            } catch (IOException e) {
-                log.error(e.getMessage());
+        long start = System.currentTimeMillis();
+        try (InputStream is = imageStore.download(id);
+             BufferedInputStream bis = new BufferedInputStream(is);
+             BufferedOutputStream bos = new BufferedOutputStream(response.getOutputStream())) {
+
+            byte[] buffer = new byte[4096];
+            int lengthRead;
+            while ((lengthRead = bis.read(buffer)) > 0) {
+                bos.write(buffer, 0, lengthRead);
             }
+        } catch (IOException e) {
+            log.error(e.getMessage());
         }
+        long end = System.currentTimeMillis();
+        long dur = Duration.ofMillis(end - start).toMillis();
+        String msg = String.format("Elapsed time in ms during writing to response: %d", dur);
+        System.out.println(msg);
         return ResponseEntity.ok().build();
     }
 

@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
@@ -129,14 +130,14 @@ public class ImageStore {
      * @param publicId the public id of the image
      * @return byte array instance with the content of the required image
      */
-    public byte[] download(String publicId) {
+    public InputStream download(String publicId) {
         Optional<Image> optionalImage = imageRepository.findByPublicId(publicId);
         if (optionalImage.isEmpty()) {
             String msg = String.format("Image not found with id: %s.", publicId);
             log.error(msg);
             throw new EntityNotFoundException(msg);
         }
-        byte[] bytes = null;
+        InputStream bytes = null;
         try {
             bytes = storageHandler.downloadAFile(optionalImage.get().getName()).get();
             log.info("Image with id: {} is downloaded.", publicId);

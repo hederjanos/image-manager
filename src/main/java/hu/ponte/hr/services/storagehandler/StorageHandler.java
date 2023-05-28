@@ -1,5 +1,6 @@
 package hu.ponte.hr.services.storagehandler;
 
+import java.io.InputStream;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -27,6 +28,6 @@ public interface StorageHandler {
      * @param fileName the name of the file to be found
      * @return a byte array instance wrapped in {@link CompletableFuture} object.
      */
-    CompletableFuture<byte[]> downloadAFile(String fileName);
+    CompletableFuture<InputStream> downloadAFile(String fileName);
 
 }

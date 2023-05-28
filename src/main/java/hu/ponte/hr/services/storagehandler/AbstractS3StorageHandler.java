@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -83,7 +84,7 @@ public abstract class AbstractS3StorageHandler implements StorageHandler {
      */
     @Override
     @Async
-    public CompletableFuture<byte[]> downloadAFile(String fileName) {
+    public CompletableFuture<InputStream> downloadAFile(String fileName) {
         if (fileName == null) {
             String methodName = new Object() {
             }.getClass().getEnclosingMethod().getName();
@@ -93,8 +94,8 @@ public abstract class AbstractS3StorageHandler implements StorageHandler {
         try {
             S3Object s3Object = amazonS3.getObject(amazonS3Config.getBucket(), fileName);
             log.info("File (name: {}) is downloaded from S3.", fileName);
-            return CompletableFuture.completedFuture(IOUtils.toByteArray(s3Object.getObjectContent()));
-        } catch (SdkClientException | IOException ex) {
+            return CompletableFuture.completedFuture(s3Object.getObjectContent());
+        } catch (SdkClientException ex) {
             String msg = String.format("Could not found file: %s in bucket: %s.", fileName, amazonS3Config.getBucket());
             log.error(msg, ex);
             throw new StorageException(msg);
