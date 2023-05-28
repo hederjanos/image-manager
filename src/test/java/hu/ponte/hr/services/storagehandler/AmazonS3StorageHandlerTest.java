@@ -15,6 +15,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.SocketUtils;
 
+import java.io.InputStream;
 import java.util.concurrent.CompletableFuture;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -73,8 +74,8 @@ class AmazonS3StorageHandlerTest {
     void testDownloadExisting() {
         String testFile = "testFile";
         amazonS3StorageHandler.uploadAFile(testFile.getBytes(), testFile);
-        CompletableFuture<byte[]> downloadAFile = amazonS3StorageHandler.downloadAFile(testFile);
-        assertEquals(testFile.getBytes().length, downloadAFile.get().length);
+        CompletableFuture<InputStream> downloadAFile = amazonS3StorageHandler.downloadAFile(testFile);
+        assertEquals(testFile.getBytes().length, downloadAFile.get().readAllBytes().length);
     }
 
     @AfterAll

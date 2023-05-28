@@ -26,7 +26,7 @@ public interface StorageHandler {
      * Download data from a storage by name.The downloading process will be executed on a separated thread.
      *
      * @param fileName the name of the file to be found
-     * @return a byte array instance wrapped in {@link CompletableFuture} object.
+     * @return an InputStream instance wrapped in {@link CompletableFuture} object.
      */
     CompletableFuture<InputStream> downloadAFile(String fileName);
 

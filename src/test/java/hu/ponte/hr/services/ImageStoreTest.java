@@ -18,6 +18,8 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 
 import javax.persistence.EntityNotFoundException;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
@@ -104,8 +106,8 @@ class ImageStoreTest {
 
     @Test
     void testDownloading() {
-        CompletableFuture<byte[]> uploadedImage = new CompletableFuture<>();
-        uploadedImage.complete("beautiful test image".getBytes());
+        CompletableFuture<InputStream> uploadedImage = new CompletableFuture<>();
+        uploadedImage.complete(new ByteArrayInputStream("beautiful test image".getBytes()));
 
         Image image = new Image();
         image.setPublicId(String.valueOf(RandomUtils.nextInt(1, Integer.MAX_VALUE)));
@@ -117,7 +119,9 @@ class ImageStoreTest {
         when(imageRepository.findByPublicId(anyString())).thenReturn(Optional.of(image));
         when(storageHandler.downloadAFile(anyString())).thenReturn(uploadedImage);
 
-        assertDoesNotThrow(() -> imageStore.download(image.getPublicId()));
+        assertDoesNotThrow(() -> {
+            return imageStore.download(image.getPublicId());
+        });
 
         verify(imageRepository, times(1)).findByPublicId(anyString());
         verify(storageHandler, times(1)).downloadAFile(anyString());

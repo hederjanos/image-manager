@@ -19,13 +19,13 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ActiveProfiles("test")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class IntegrationTest {
+class IntegrationTest {
 
     @Autowired
     private TestRestTemplate restTemplate;
 
     @Test
-    public void testUploadAndRetrieving() {
+    void testUploadAndRetrieving() {
         String fileName = "cat.jpg";
         ClassPathResource resource = new ClassPathResource("images/" + fileName);
         MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
@@ -50,7 +50,7 @@ public class IntegrationTest {
     }
 
     @Test
-    public void testDownloadNotExisting() {
+    void testDownloadNotExisting() {
         ResponseEntity<Void> response = this.restTemplate.getForEntity("/api/images/preview/123", Void.class);
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }

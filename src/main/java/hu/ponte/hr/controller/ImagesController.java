@@ -55,11 +55,9 @@ public class ImagesController {
         if (id == null) {
             throw new IllegalArgumentException();
         }
-        long start = System.currentTimeMillis();
         try (InputStream is = imageStore.download(id);
              BufferedInputStream bis = new BufferedInputStream(is);
              BufferedOutputStream bos = new BufferedOutputStream(response.getOutputStream())) {
-
             byte[] buffer = new byte[4096];
             int lengthRead;
             while ((lengthRead = bis.read(buffer)) > 0) {
@@ -68,10 +66,6 @@ public class ImagesController {
         } catch (IOException e) {
             log.error(e.getMessage());
         }
-        long end = System.currentTimeMillis();
-        long dur = Duration.ofMillis(end - start).toMillis();
-        String msg = String.format("Elapsed time in ms during writing to response: %d", dur);
-        System.out.println(msg);
         return ResponseEntity.ok().build();
     }
 

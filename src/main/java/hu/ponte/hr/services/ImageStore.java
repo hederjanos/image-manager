@@ -128,7 +128,7 @@ public class ImageStore {
      * Throws {@link StorageException} if {@link StorageHandler} throws exception.
      *
      * @param publicId the public id of the image
-     * @return byte array instance with the content of the required image
+     * @return an InputStream instance with the content of the required image
      */
     public InputStream download(String publicId) {
         Optional<Image> optionalImage = imageRepository.findByPublicId(publicId);
@@ -137,9 +137,9 @@ public class ImageStore {
             log.error(msg);
             throw new EntityNotFoundException(msg);
         }
-        InputStream bytes = null;
+        InputStream imageStream = null;
         try {
-            bytes = storageHandler.downloadAFile(optionalImage.get().getName()).get();
+            imageStream = storageHandler.downloadAFile(optionalImage.get().getName()).get();
             log.info("Image with id: {} is downloaded.", publicId);
         } catch (InterruptedException | ExecutionException e) {
             if (e.getCause() instanceof StorageException) {
@@ -147,7 +147,7 @@ public class ImageStore {
             }
             Thread.currentThread().interrupt();
         }
-        return bytes;
+        return imageStream;
     }
 
 }

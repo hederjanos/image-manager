@@ -1,6 +1,5 @@
 package hu.ponte.hr.controller;
 
-import hu.ponte.hr.controller.ImageMeta;
 import hu.ponte.hr.services.ImageStore;
 import hu.ponte.hr.util.TestImageReader;
 import org.junit.jupiter.api.Test;
@@ -11,6 +10,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import java.io.ByteArrayInputStream;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -48,7 +48,7 @@ class ImagesControllerTest {
     @Test
     void testGetImage() throws Exception {
         byte[] image = TestImageReader.readTestImagesFromResources("images").values().stream().findAny().get();
-        when(imageStore.download(anyString())).thenReturn(image);
+        when(imageStore.download(anyString())).thenReturn(new ByteArrayInputStream(image));
         MvcResult mvcResult = mockMvc.perform(get("/api/images/preview/{id}", "1234"))
                 .andExpect(status().isOk())
                 .andReturn();

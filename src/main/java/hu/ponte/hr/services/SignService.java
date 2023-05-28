@@ -60,7 +60,7 @@ public class SignService {
                  InvalidKeyException ex) {
             String msg = "Something went wrong during signing.";
             log.error(msg, ex);
-            throw new CustomSignatureException("Something went wrong during signing.");
+            throw new CustomSignatureException(msg);
         }
     }
 

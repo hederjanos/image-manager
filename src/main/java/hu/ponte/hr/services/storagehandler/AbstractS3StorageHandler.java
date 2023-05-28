@@ -2,14 +2,10 @@ package hu.ponte.hr.services.storagehandler;
 
 import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.AmazonS3Exception;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.*;
 import hu.ponte.hr.config.AmazonS3Config;
 import hu.ponte.hr.exception.exceptions.StorageException;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -80,7 +76,7 @@ public abstract class AbstractS3StorageHandler implements StorageHandler {
      * Throws {@link StorageException} if {@link AmazonS3} client throws exception.
      *
      * @param fileName the name of the file to be found
-     * @return a byte array instance wrapped in {@link CompletableFuture} object.
+     * @return an InputStream instance which contains data wrapped in {@link CompletableFuture} object.
      */
     @Override
     @Async
@@ -92,7 +88,8 @@ public abstract class AbstractS3StorageHandler implements StorageHandler {
             throw new IllegalArgumentException();
         }
         try {
-            S3Object s3Object = amazonS3.getObject(amazonS3Config.getBucket(), fileName);
+            GetObjectRequest getObjectRequest = new GetObjectRequest(amazonS3Config.getBucket(), fileName);
+            S3Object s3Object = amazonS3.getObject(getObjectRequest);
             log.info("File (name: {}) is downloaded from S3.", fileName);
             return CompletableFuture.completedFuture(s3Object.getObjectContent());
         } catch (SdkClientException ex) {
